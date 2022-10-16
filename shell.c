@@ -63,7 +63,6 @@ void run_command(char **args){
     for (i = 0; args[i]!= NULL; i++) {
         free(args[i]);
     }
-    free(args[i]);
 }
 
 int main(){
