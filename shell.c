@@ -59,10 +59,6 @@ void run_command(char **args){
     {
         wait(&status);
     }
-
-    for (i = 0; args[i]!= NULL; i++) {
-        free(args[i]);
-    }
 }
 
 int main(){
