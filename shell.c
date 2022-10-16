@@ -37,7 +37,7 @@ char **parse_space(char *cmd){
 
 void run_command(char **args){
 	pid_t child_pid;
-    int status;
+    int status, i;
     char first[50] = "/bin/";
 
     child_pid = fork();
@@ -60,7 +60,7 @@ void run_command(char **args){
         wait(&status);
     }
 
-    for (int i = 0; args[i]!= NULL; i++) {
+    for (i = 0; args[i]!= NULL; i++) {
         free(args[i]);
     }
     free(args[i]);
