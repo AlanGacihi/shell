@@ -58,7 +58,6 @@ void run_command(char **args){
     else
     {
         wait(&status);
-        printf("Oh, it's all better now\n");
     }
 }
 
