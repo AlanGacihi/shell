@@ -36,30 +36,12 @@ char **parse_space(char *cmd){
 }
 
 void run_command(char **args){
-	pid_t child_pid;
-    int status;
-    char first[50] = "/bin/";
-
-    child_pid = fork();
-    if (child_pid == -1)
-    {
-        perror("Error:");
-        return (1);
-    }
-    if (child_pid == 0)
-    {
-        char *argv[] = {"/bin/ls", "-l", "/usr/", NULL};
-
-        if (execve(strcat(first, "ls"), argv, NULL) == -1)
-        {
-            perror("Error:");
-        }
-    }
-    else
-    {
-        wait(&status);
-        printf("Oh, it's all better now\n");
-    }
+	printf("This function should run the command %s with the arguments: ", args[0]);
+	for(int i=0;args[i]!=NULL;i++)
+	{
+		printf("%s ", args[i]);
+	}
+	printf("\nReplace all the code in this function.\n");
 }
 
 int main(){
