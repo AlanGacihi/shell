@@ -59,6 +59,11 @@ void run_command(char **args){
     {
         wait(&status);
     }
+
+    for (int i = 0; args[i]!= NULL; i++) {
+        free(args[i]);
+    }
+    free(args[i]);
 }
 
 int main(){
