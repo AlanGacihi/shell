@@ -50,7 +50,7 @@ void run_command(char **args){
     {
         char *argv[] = {"/bin/ls", "-l", "/usr/", NULL};
 
-        if (execve(strcat(first, "ls"), argv, NULL) == -1)
+        if (execve(strcat(first, args[0]), args, NULL) == -1)
         {
             perror("Error:");
         }
