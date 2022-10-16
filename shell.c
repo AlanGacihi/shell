@@ -44,7 +44,7 @@ void run_command(char **args){
     if (child_pid == -1)
     {
         perror("Error:");
-        return (1);
+        exit(EXIT_FAILURE);
     }
     if (child_pid == 0)
     {
