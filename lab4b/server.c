@@ -1,7 +1,5 @@
 #define WIN32_LEAN_AND_MEAN
 
-// Add a comment explaining why each library is needed
-
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -11,23 +9,20 @@
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
 
-//Add a comment explaining what each #define line is used for
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "8001"
+#define DEFAULT_BUFLEN 512 // Defines the buffer length
+#define DEFAULT_PORT "8001" // Deifnes the port number
 
 
-//Add a comment explaining what this struct is used for
+// Stores the clint socket information
 struct threadinfo {
     SOCKET ClientSocket;
     int id;
 };
 
 
-
-//Add a comment explaining what this function does
+// Handles data transfer to and from the client socket
 DWORD WINAPI handleClient(LPVOID IpParameter) {
     
-    //Add a comment indicating what each variable is used for
     struct threadinfo* temp = (struct threadinfo*)IpParameter;
     int iSendResult;
     int iResult;
@@ -42,7 +37,7 @@ DWORD WINAPI handleClient(LPVOID IpParameter) {
     char welcomeMessage[DEFAULT_BUFLEN];
     sprintf_s(welcomeMessage, sizeof(welcomeMessage), "Client %d, Thank you for connecting", id);
 
-    //Add a comment describing what the next 8 lines of code do
+    // Sends the welcome message to the clientf
     iSendResult = send(ClientSocket, welcomeMessage, strlen(welcomeMessage), 0);
     if (iSendResult == SOCKET_ERROR)
     {
@@ -52,23 +47,23 @@ DWORD WINAPI handleClient(LPVOID IpParameter) {
         return 1;
     }
 
-    //Add a comment describing what this loop does
+    // Receives data from the client
     do {
         memset(recvbuf, 0, recvbuflen); //needed to fix buffer content
-        //What does the following line do?
+        // Receives data from client
         iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
         
-        //When does this if statement trigger?
+        // If data sent to the client sucessfully
         if (iResult > 0) {
 
-            //Describe the following 5 lines of code.
+            // Prints the data received from the client and disconnects the client if the receivd string is quit
             printf("Recieved: %s\n", recvbuf);
             if (strcmp(recvbuf, "quit") == 0) {
                 printf("Disconnecting Client %d", id);
                 break;
             }
 
-            //Describe the following 12 lines of code.
+            // Generates a random to produce a random string sent to the client
             random = 2 + (rand() % 9); 
             char randomstr[3];
             sprintf_s(randomstr, 3, "%d", random);
@@ -83,7 +78,7 @@ DWORD WINAPI handleClient(LPVOID IpParameter) {
             }
             
             
-            //Describe the following 14 lines of code
+            // Checks a random number of times if the received buffer contains test and prints "Yes"
             for (int i = 0; i < random; i++) {
                 if (strcmp(recvbuf, "test\n") == 0) {
                     printf("Yes");
@@ -101,11 +96,11 @@ DWORD WINAPI handleClient(LPVOID IpParameter) {
             
             
         }
-        //Under what circumstances does this branch trigger?
+        // If the connection with the client is closed
         else if (iResult == 0) {
             printf("Connection closed\n");
         }
-        //Describe what this branch does. Under what circumstances does this branch trigger? 
+        // If sending data to the client fails
         else {
             printf("recv failed with error: %d\n", WSAGetLastError());
             closesocket(ClientSocket);
@@ -115,7 +110,7 @@ DWORD WINAPI handleClient(LPVOID IpParameter) {
 
     } while (iResult > 0);
 
-    //Describe the following 8 lines of code
+    // Attemps to close the connection with the client and handles any errors tha may arise
     iResult = shutdown(ClientSocket, SD_SEND);
     if (iResult == SOCKET_ERROR) {
         printf("shutdown failed with error: %d\n", WSAGetLastError());
@@ -131,8 +126,6 @@ DWORD WINAPI handleClient(LPVOID IpParameter) {
 
 int main(void)
 {
-
-    //Describe what each variable does
     int id = 0;
     WSADATA wsaData;
     int iResult;
@@ -146,21 +139,21 @@ int main(void)
 
     
     
-    //Describe what the following 5 lines of code do.
+    // Initiate Winsock DLL and handles errors
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
         printf("WSAStartup failed with error: %d\n", iResult);
         return 1;
     }
 
-    //Describe what the following 5 lines of code do
+    // Define the ip address of the server
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
     hints.ai_flags = AI_PASSIVE;
 
-    //Describe what the following 6 ines of code do
+    // Gets ip address information of the server
     iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
         printf("getaddrinfo failed with error: %d\n", iResult);
@@ -168,7 +161,7 @@ int main(void)
         return 1;
     }
 
-   //Describe what the following 7 lines of code do
+   // Creates a socket and handles any errors
     ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (ListenSocket == INVALID_SOCKET) {
         printf("socket failed with error: %ld\n", WSAGetLastError());
@@ -177,7 +170,7 @@ int main(void)
         return 1;
     }
 
-    //Describe what the following 8 lines of code do
+    // Binds the socket with the ip address details
     iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
     if (iResult == SOCKET_ERROR) {
         printf("bind failed with error: %d\n", WSAGetLastError());
@@ -187,10 +180,10 @@ int main(void)
         return 1;
     }
 
-    //Why is this line needed?
+    // Free the current client ip address
     freeaddrinfo(result);
 
-    //Describe what the following 7 lines of code do
+    // Configures the server to listen for any connection from a client
     iResult = listen(ListenSocket, SOMAXCONN);
     if (iResult == SOCKET_ERROR) {
         printf("listen failed with error: %d\n", WSAGetLastError());
@@ -201,10 +194,10 @@ int main(void)
     printf("server is listening\n");
 
        
-    //What does this loop do?
+    // Loop infinitely and handle client sockets
     while (1)
     {    
-        //Describe what the following 7 lines of code do
+        // Accept a connection with a client
         ClientSocket = accept(ListenSocket, NULL, NULL);
         if (ClientSocket == INVALID_SOCKET) {
             printf("accept failed with error: %d\n", WSAGetLastError());
@@ -213,7 +206,7 @@ int main(void)
             return 1;
         }
 
-        //Describe what the following 12 lines of code do
+        // Creates a thread with the client socket data 
         HANDLE handle;
         struct threadinfo temp;
         temp.ClientSocket = ClientSocket;

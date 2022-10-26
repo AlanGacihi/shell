@@ -48,8 +48,6 @@ void run_command(char **args){
     }
     if (child_pid == 0)
     {
-        char *argv[] = {"/bin/ls", "-l", "/usr/", NULL};
-
         if (execve(strcat(first, args[0]), args, NULL) == -1)
         {
             perror("Error:");
